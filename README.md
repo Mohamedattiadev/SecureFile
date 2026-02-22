@@ -1,116 +1,112 @@
 # 🛡️ SecureFile
 
-SecureFile is a production-ready, secure file management web application built with Node.js and Express. It features a modern Bootstrap 5 UI, robust authentication, and enterprise-grade security protections against common web vulnerabilities.
+<p align="center">
+  <img src="IMGS/image.png" alt="SecureFile Dashboard Overview" width="800">
+</p>
 
-## 🚀 Features
+**SecureFile** is a robust, production-ready secure file management and sharing platform built with Node.js and Express. It features a modern, responsive interface powered by Bootstrap 5 and is heavily hardened against the OWASP Top 10 vulnerabilities, establishing a reliable, enterprise-grade architecture for secure internal data exchange.
 
-- **Modern UI/UX**: Responsive design using Bootstrap 5 with a clean "SaaS" aesthetic.
-- **Secure File Handling**:
-  - MIME-type validation.
-  - File size limits (5MB).
-  - Double extension prevention.
-  - Path traversal protection (UUID renaming).
-- **Authentication & Authorization**:
-  - Secure login/registration with Bcrypt password hashing.
-  - Session-based authentication with secure cookie settings.
-  - Role-based access control (User vs. Admin).
-  - IDOR (Insecure Direct Object Reference) prevention for file downloads/deletions.
-- **Security Protections**:
-  - CSRF protection on all state-changing routes.
-  - Rate limiting for brute-force prevention on authentication routes.
-  - Secure HTTP headers via Helmet.js.
-  - Input sanitization and validation.
-- **Admin Dashboard**: Comprehensive view for administrators to manage all users and files in the system.
+---
 
-## 🛠️ Tech Stack
+##  Platform Highlights
 
-- **Backend**: Node.js, Express.js
-- **Database**: SQLite (managed via `sqlite3`)
-- **Templating**: EJS with `express-ejs-layouts`
-- **Styling**: Bootstrap 5, Bootstrap Icons, Vanilla CSS
-- **Testing**: Jest, Supertest
+- **Granular Secure Sharing**: Control precisely who has access to your payload with customized, down-to-the-minute temporal expirations.
+- **Message & Chat Integration**: Collaborate with internal connections via our live-polling secure chat relay, coupled with direct file sharing over internal DMs.
+- **Premium User Experience**: Responsive layout, asynchronous form handling (AJAX), and custom flash toast interactions provide a "SaaS"-level feel globally.
+- **Automated Deployments**: Container-first scaling strategy allowing for native 20-second builds via Docker.
 
-## 📋 Prerequisites
+##  Security Architecture
+SecureFile enforces rigorous constraints and mitigations designed to neutralize advanced exploitation techniques:
 
-- Node.js (v14 or higher)
-- npm (v6 or higher)
+- **SQL Injection (SQLi)**: Comprehensive adoption of parameter-bound (`?`) execution mapping for all SQLite3 interactions.
+- **Cross-Site Scripting (XSS)**: Templating enforces native HTML escaping mechanisms mitigating maliciously stored script payloads.
+- **Malicious File Uploads / LFI**: Deep input stream sanitization mapping file payloads against MIME logic, randomized utilizing server-generated cryptographic UUIDs (Preventing Path Traversal).
+- **IDOR Prevention**: Horizontal and vertical structural isolation ensures every CRUD operation absolutely binds against the issuing user’s JWT / Session ID natively on the backend.
+- **CSRF Protections**: Non-GET routes mandate verified transmission of Synchronizer Token Patterns attached to authenticated sessions.
+- **Sliding-Window Rate Limiting**: Intelligent API throttling across Authentication and globally-available vectors.
 
-## ⚙️ Installation
+---
 
-1. **Clone the repository**:
+##  Quick Start Guide
+
+We strongly recommend launching SecureFile via **Docker** to ensure perfect environmental consistency and automatic dependency mapping.
+
+###  Deploying with Docker (Recommended)
+
+**Prerequisites:** Ensure you have [Docker](https://docs.docker.com/get-docker/) installed. 
+
+1. **Clone the Source**:
    ```bash
    git clone <repository-url>
    cd securefile
    ```
 
-2. **Install dependencies**:
+2. **Configure the Environment**:
+   Duplicate the provided configuration template to set your environment variables.
+   ```bash
+   cp .env.example .env
+   ```
+   *Note: Open your newly created `.env` file and verify `SESSION_SECRET` and `ENCRYPTION_KEY` match your target production entropy.*
+
+3. **Build and Launch**:
+   Instruct Docker Compose to compile the NodeJS blueprint and execute the web server daemon in the background:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. **Access the Application**:
+   Navigate natively to [http://localhost:3000](http://localhost:3000)
+
+   *The Docker layout natively incorporates mounted persistent volumes. This means your core SQLite database instance (`database.sqlite`) and dynamic user assets (`uploads/`, `public/avatars/`) will safely survive container reboots or iterative version pulls.*
+
+   **Useful Docker Maintenance Commands:**
+   - Monitor the active server log stream: `docker-compose logs -f`
+   - Halt the container instance securely: `docker-compose down`
+
+###  Native Deployment (Node.js)
+
+If you prefer to serve the application natively, ensure you have Node.js (v20+) and local NPM installed.
+
+1. **Install Modules**:
    ```bash
    npm install
    ```
 
-3. **Configure Environment Variables**:
-   Copy the example environment file and update the values:
+2. **Initialize Properties**:
    ```bash
    cp .env.example .env
    ```
-   *Note: Ensure you set a strong `SESSION_SECRET` for production.*
 
-4. **Initialize Database**:
-   The database tables will be automatically created on the first run.
-
-## 🏃 Usage
-
-We support both native Node.js environments and Docker containers for deployment.
-
-### 🐳 Using Docker (Recommended)
-You can easily build and run the entire application, including the database and persistent volumes, using Docker and Docker Compose.
-
-1. **Ensure environment is configured**: Make sure your `.env` file is present (created in the Installation step).
-2. **Build and start the container (detached mode)**:
+3. **Execute the Server Daemon**:
    ```bash
-   docker-compose up -d --build
+   npm start
    ```
-3. The app will be running in the background at `http://localhost:3000`.
-   - *Volumes are configured automatically to persist `database.sqlite`, user `avatars/`, and the `uploads/` directories on your host machine.*
-   - To view server logs: `docker-compose logs -f`
-   - To stop the server: `docker-compose down`
 
-### 💻 Native Deployment / Development
-To start the application natively via Node:
-```bash
-npm start
-```
-The app will be available at `http://localhost:3000`.
+---
 
-### 🧪 Testing
-To run the automated integration test suite natively:
+## Integration Testing Suite
+SecureFile ships equipped with a thorough endpoint testing matrix engineered via Jest and Supertest. To validate session stability and access protocols locally:
 ```bash
 npm test
 ```
 
-## 📂 Project Structure
+For rigorous manual exploitation scenarios evaluating architectural boundary limitations, refer to the included [Manual Testing Guide](MANUAL_TEST_GUIDE.md).
+
+---
+
+## Source Matrix
 
 ```text
-├── middleware/          # Custom auth, role, and error middlewares
-├── public/              # Static assets (CSS, JS, Images)
-├── routes/              # Express route handlers
-├── test/                # Automated Jest/Supertest suite
-├── uploads/             # Encrypted/Renamed file storage
-├── views/               # EJS templates and layouts
-├── app.js               # Application entry point & configuration
-├── database.js          # SQLite connection and schema setup
-
+├── IMGS/                # Associated media files and documentation captures
+├── middleware/          # Security logic gates (Auth, CSRF, Role allocations)
+├── public/              # Static Frontend assets (CSS maps, core libraries)
+├── routes/              # Express API execution paths
+├── test/                # Jest / Supertest endpoint specifications
+├── uploads/             # Segregated file storage volumes
+├── views/               # Dynamic EJS DOM presentation templates
+├── app.js               # Primary application configuration and HTTP mapping
+├── database.js          # SQLite3 initializations and Schema structure
 ```
 
-## 🔒 Security Best Practices Implemented
-
-- **CSRF Protection**: Every form inclusion requires a token. Multipart forms handle tokens via query parameters to ensure `multer` compliance.
-- **Session Security**: Cookies are `HttpOnly`, `SameSite=Lax`, and `Secure` (in production).
-- **Error Handling**: Centralized handler prevents information leakage by hiding stack traces in production.
-- **XSS Prevention**: EJS handles output encoding, and Helmet's CSP restricts unauthorized script execution.
-
-## 📝 Documentation
-- [Manual Testing Guide](MANUAL_TEST_GUIDE.md): Scenario-based verification of security features.
-
-## ⚖️ License
-This project is for educational security purposes. Use responsibly.
+---
+*This platform was engineered meticulously to serve as a hardened baseline for secure internal file exchange methodologies.*
