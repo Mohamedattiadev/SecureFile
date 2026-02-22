@@ -108,7 +108,7 @@ const rateLimitHandler = (req, res, next, options) => {
     });
 };
 
-const globalLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200, handler: rateLimitHandler });
+const globalLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 2000, handler: rateLimitHandler });
 const searchLimiter = rateLimit({ windowMs: 5 * 60 * 1000, max: 50, message: 'Too many search attempts', handler: rateLimitHandler });
 const uploadLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Too many uploads', handler: rateLimitHandler });
 
