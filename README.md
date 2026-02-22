@@ -31,13 +31,13 @@ SecureFile enforces rigorous constraints and mitigations designed to neutralize 
 
 We strongly recommend launching SecureFile via **Docker** to ensure perfect environmental consistency and automatic dependency mapping.
 
-###  Deploying with Docker (Recommended)
+###  Deploying with Docker - (Recommended)
 
 **Prerequisites:** Ensure you have [Docker](https://docs.docker.com/get-docker/) installed. 
 
 1. **Clone the Source**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Mohamedattiadev/SecureFile
    cd securefile
    ```
 
@@ -63,21 +63,29 @@ We strongly recommend launching SecureFile via **Docker** to ensure perfect envi
    - Monitor the active server log stream: `docker-compose logs -f`
    - Halt the container instance securely: `docker-compose down`
 
-###  Native Deployment (Node.js)
+---
+
+###  Native Deployment (Node.js) - (Instead of Docker)
 
 If you prefer to serve the application natively, ensure you have Node.js (v20+) and local NPM installed.
 
-1. **Install Modules**:
+1. **Clone the Source**:
+   ```bash
+   git clone https://github.com/Mohamedattiadev/SecureFile
+   cd securefile
+   ```
+
+2. **Install Modules**:
    ```bash
    npm install
    ```
 
-2. **Initialize Properties**:
+3. **Initialize Properties**:
    ```bash
    cp .env.example .env
    ```
 
-3. **Execute the Server Daemon**:
+4. **Execute the Server Daemon**:
    ```bash
    npm start
    ```
