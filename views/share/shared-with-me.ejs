@@ -1,0 +1,71 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-4"><i class="bi bi-people me-2 text-primary"></i> Shared With Me</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Owner</th>
+                                <th>Permission</th>
+                                <th>Shared At</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% files.forEach(file=> { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-text fs-4 text-primary me-2"></i>
+                                            <div>
+                                                <div class="fw-bold">
+                                                    <%= file.original_name %>
+                                                </div>
+                                                <% if (file.is_encrypted) { %>
+                                                    <span
+                                                        class="badge bg-success-subtle text-success small">Encrypted</span>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark">
+                                            <%= file.owner_name %>
+                                        </span></td>
+                                    <td><span class="text-uppercase small fw-bold">
+                                            <%= file.permission %>
+                                        </span></td>
+                                    <td class="text-muted">
+                                        <%= file.shared_at ? new Date(file.shared_at).toLocaleDateString()
+                                            : 'Unknown Date' %>
+                                    </td>
+                                    <td class="text-end">
+                                        <% if (file.permission==='download' ) { %>
+                                            <a href="/files/download/<%= file.id %>"
+                                                class="btn btn-primary rounded-pill btn-sm px-3">
+                                                <i class="bi bi-download me-1"></i> Download
+                                            </a>
+                                            <% } else { %>
+                                                <a href="/share/view/<%= file.id %>"
+                                                    class="btn btn-outline-secondary rounded-pill btn-sm px-3">
+                                                    <i class="bi bi-eye me-1"></i> View Only
+                                                </a>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% if (files.length===0) { %>
+                    <div class="text-center py-5">
+                        <p class="text-muted">No files have been shared with you yet.</p>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+</div>

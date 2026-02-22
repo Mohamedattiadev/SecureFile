@@ -1,0 +1,110 @@
+<div class="row h-100 align-items-center justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
+            <!-- Secure Viewer Header -->
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center p-3 border-0">
+                <h5 class="mb-0"><i class="bi bi-shield-lock me-2"></i> Secure View: <%= file.original_name %>
+                </h5>
+                <a href="/share/shared-with-me" class="btn btn-outline-light btn-sm rounded-pill"><i
+                        class="bi bi-x-lg"></i> Close</a>
+            </div>
+
+            <!-- Secure Viewer Body -->
+            <div class="card-body p-0 position-relative bg-light" id="secureViewerContainer"
+                style="min-height: 60vh; display: flex; align-items: center; justify-content: center; user-select: none;">
+
+                <!-- Watermark Overlay -->
+                <div class="position-absolute w-100 h-100 d-flex flex-column justify-content-center align-items-center pointer-events-none"
+                    style="opacity: 0.05; z-index: 10; pointer-events: none; overflow: hidden;">
+                    <% for(let i=0; i<10; i++) { %>
+                        <div class="watermark-row"
+                            style="transform: rotate(-30deg); white-space: nowrap; margin-bottom: 50px;">
+                            <h1 class="display-1 fw-bold text-dark m-0 px-5">SECURE VIEW ONLY - DO NOT COPY - <%=
+                                    file.original_name %> - <%= file.owner_name %> - <%= new
+                                            Date().toISOString().split('T')[0] %>
+                            </h1>
+                        </div>
+                        <% } %>
+                </div>
+
+                <!-- Glitch/Anti-Screenshot Overlay -->
+                <div id="antiScreenshotOverlay"
+                    class="position-absolute w-100 h-100 bg-dark text-white d-flex flex-column justify-content-center align-items-center d-none"
+                    style="z-index: 1050; opacity: 0.95;">
+                    <i class="bi bi-shield-x display-1 text-danger mb-3"></i>
+                    <h2>Screenshots Disabled</h2>
+                    <p class="text-muted">This file is protected and cannot be captured or downloaded.</p>
+                </div>
+
+                <!-- Content Area -->
+                <div class="w-100 h-100 p-4" style="overflow-y: auto;">
+                    <% if (file.original_name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) { %>
+                        <img src="/share/stream/<%= file.id %>" class="img-fluid d-block mx-auto rounded shadow-sm"
+                            alt="Secure Image" style="max-height: 80vh; pointer-events: none;" draggable="false">
+                        <% } else if (file.original_name.match(/\.(pdf)$/i)) { %>
+                            <iframe src="/share/stream/<%= file.id %>#toolbar=0&navpanes=0&scrollbar=0" loading="lazy"
+                                width="100%" height="600px" style="border: none;" title="Secure PDF"></iframe>
+                            <% } else if (file.original_name.match(/\.(txt|md|csv)$/i)) { %>
+                                <iframe src="/share/stream/<%= file.id %>" width="100%" height="600px"
+                                    style="border: none; background: white;" title="Secure Text"></iframe>
+                                <% } else { %>
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-file-earmark-lock display-1 text-muted mb-3"></i>
+                                        <h4>Preview Not Available</h4>
+                                        <p class="text-muted">This file type cannot be previewed securely in the
+                                            browser.</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <div class="card-footer bg-light text-center py-2 text-muted small border-0">
+                <i class="bi bi-info-circle me-1"></i> Owner: <strong>
+                    <%= file.owner_name %>
+                </strong> | Shared: <strong>
+                    <%= new Date(file.shared_at || Date.now()).toLocaleDateString() %>
+                </strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Disable right-click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable text selection
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+
+        // Disable drag and drop
+        document.addEventListener('dragstart', event => event.preventDefault());
+
+        const antiScreenshotOverlay = document.getElementById('antiScreenshotOverlay');
+
+        // Attempted Anti-Screenshot logic (key sniffing)
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                triggerAntiScreenshot();
+            }
+        });
+
+        // Detect visibility changes (e.g., app switching on mobile or Snipping Tool interference sometimes triggers blur)
+        window.addEventListener('blur', () => {
+            antiScreenshotOverlay.classList.remove('d-none');
+        });
+
+        window.addEventListener('focus', () => {
+            antiScreenshotOverlay.classList.add('d-none');
+        });
+
+        function triggerAntiScreenshot() {
+            antiScreenshotOverlay.classList.remove('d-none');
+            navigator.clipboard.writeText('Screenshots are disabled for this SecureFile.');
+            setTimeout(() => {
+                antiScreenshotOverlay.classList.add('d-none');
+            }, 3000);
+        }
+    });
+</script>

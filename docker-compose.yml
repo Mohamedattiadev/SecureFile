@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./database.sqlite:/app/database.sqlite
+      - ./uploads:/app/uploads
+      - ./public/avatars:/app/public/avatars
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_FILE=database.sqlite
+      - SESSION_SECRET=${SESSION_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    restart: always

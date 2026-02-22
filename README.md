@@ -60,15 +60,30 @@ SecureFile is a production-ready, secure file management web application built w
 
 ## 🏃 Usage
 
-### Development / Production
-To start the application:
+We support both native Node.js environments and Docker containers for deployment.
+
+### 🐳 Using Docker (Recommended)
+You can easily build and run the entire application, including the database and persistent volumes, using Docker and Docker Compose.
+
+1. **Ensure environment is configured**: Make sure your `.env` file is present (created in the Installation step).
+2. **Build and start the container (detached mode)**:
+   ```bash
+   docker-compose up -d --build
+   ```
+3. The app will be running in the background at `http://localhost:3000`.
+   - *Volumes are configured automatically to persist `database.sqlite`, user `avatars/`, and the `uploads/` directories on your host machine.*
+   - To view server logs: `docker-compose logs -f`
+   - To stop the server: `docker-compose down`
+
+### 💻 Native Deployment / Development
+To start the application natively via Node:
 ```bash
 npm start
 ```
 The app will be available at `http://localhost:3000`.
 
-### Testing
-To run the automated integration test suite:
+### 🧪 Testing
+To run the automated integration test suite natively:
 ```bash
 npm test
 ```

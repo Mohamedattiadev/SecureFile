@@ -1,0 +1,107 @@
+<div class="row g-4">
+    <!-- User Settings -->
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 text-center">
+                <div class="mb-4">
+                    <img src="<%= user.avatar_path || 'https://ui-avatars.com/api/?name='+user.username+'&background=random' %>"
+                        class="rounded-circle shadow-sm border" style="width: 120px; height: 120px; object-fit: cover;">
+                </div>
+
+                <h3 class="fw-bold mb-0 text-dark">
+                    <%= user.username %>
+                </h3>
+                <p class="text-muted">
+                    <%= user.email %>
+                </p>
+
+                <% if (user.is_verified) { %>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 mb-4">
+                        <i class="bi bi-patch-check-fill"></i> Verified Account
+                    </span>
+                    <% } %>
+
+                        <hr class="my-4 opacity-10">
+
+                        <form action="/profile/upload-avatar?_csrf=<%= csrfToken %>" method="POST"
+                            enctype="multipart/form-data" class="mb-4">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <div class="input-group input-group-sm">
+                                <input type="file" name="avatar" class="form-control" required>
+                                <button class="btn btn-outline-primary" type="submit">Update Avatar</button>
+                            </div>
+                        </form>
+
+                        <div class="text-start">
+                            <h6 class="fw-bold mb-3">Update Personal Details</h6>
+                            <form action="/profile/update-username" method="POST" class="mb-4">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <div class="mb-3">
+                                    <label class="form-label small">Username</label>
+                                    <input type="text" name="username" class="form-control" value="<%= user.username %>"
+                                        required>
+                                </div>
+                                <button class="btn btn-primary w-100 rounded-pill" type="submit">Save Changes</button>
+                            </form>
+
+                            <h6 class="fw-bold mb-3">Security</h6>
+                            <form action="/profile/change-password" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <div class="mb-3">
+                                    <input type="password" name="currentPassword" class="form-control"
+                                        placeholder="Current Password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="password" name="newPassword" class="form-control"
+                                        placeholder="New Password" required minlength="8">
+                                </div>
+                                <button class="btn btn-outline-danger w-100 rounded-pill" type="submit">Update
+                                    Password</button>
+                            </form>
+                        </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4"><i class="bi bi-clock-history me-2"></i> Recent Activity Log</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle small">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Time</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% logs.forEach(log=> { %>
+                                <tr>
+                                    <td>
+                                        <span
+                                            class="fw-bold <%= log.action.includes('FAIL') ? 'text-danger' : 'text-primary' %>">
+                                            <%= log.action %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%= log.details || '-' %>
+                                    </td>
+                                    <td class="text-muted">
+                                        <%= new Date(log.timestamp).toLocaleString() %>
+                                    </td>
+                                    <td class="text-muted font-monospace">
+                                        <%= log.ip_address %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

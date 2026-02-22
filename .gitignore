@@ -28,3 +28,8 @@ Thumbs.db
 # VS Code / IDE
 .vscode/
 .idea/
+
+# other
+
+*.txt
+

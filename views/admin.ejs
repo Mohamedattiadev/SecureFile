@@ -1,117 +1,137 @@
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
-    <h1 class="h2"><i class="bi bi-shield-lock text-danger"></i> Admin Dashboard</h1>
-</div>
-
-<div class="row">
-    <!-- Users Section -->
-    <div class="col-12 mb-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-people-fill"></i> System Users</h6>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% users.forEach(function(u) { %>
-                                <tr>
-                                    <td class="ps-4 text-muted">#<%= u.id %>
-                                    </td>
-                                    <td class="fw-bold">
-                                        <%= u.username %>
-                                    </td>
-                                    <td><a href="mailto:<%= u.email %>" class="text-decoration-none">
-                                            <%= u.email %>
-                                        </a></td>
-                                    <td>
-                                        <% if (u.role==='admin' ) { %>
-                                            <span class="badge bg-danger">Admin</span>
-                                            <% } else { %>
-                                                <span class="badge bg-secondary">User</span>
-                                                <% } %>
-                                    </td>
-                                </tr>
-                                <% }); %>
-                        </tbody>
-                    </table>
-                </div>
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-primary text-white">
+            <div class="card-body">
+                <h6 class="text-white-50">Total Users</h6>
+                <h2 class="fw-bold mb-0">
+                    <%= stats.userCount %>
+                </h2>
             </div>
         </div>
     </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-info text-white">
+            <div class="card-body">
+                <h6 class="text-white-50">Total Files</h6>
+                <h2 class="fw-bold mb-0">
+                    <%= stats.fileCount %>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-danger text-white">
+            <div class="card-body">
+                <h6 class="text-white-50">Failed Logins</h6>
+                <h2 class="fw-bold mb-0">
+                    <%= stats.failedLogins %>
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-success text-white">
+            <div class="card-body">
+                <h6 class="text-white-50">Encrypted Data</h6>
+                <h2 class="fw-bold mb-0">
+                    <%= stats.encryptedFiles %>
+                </h2>
+                <small class="opacity-75">Files at rest</small>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Files Section -->
-    <div class="col-12">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-success"><i class="bi bi-files"></i> Global File Inventory</h6>
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0"><i class="bi bi-people-fill me-2"></i> User Management</h5>
+            <div class="d-flex gap-2">
+                <a href="/admin/backup" class="btn btn-outline-primary btn-sm rounded-pill">
+                    <i class="bi bi-download me-1"></i> Data Backup
+                </a>
             </div>
-            <div class="card-body p-0">
-                <% if (files && files.length> 0) { %>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4">File ID</th>
-                                    <th>Original Name</th>
-                                    <th>Owner</th>
-                                    <th>Upload Date</th>
-                                    <th class="text-end pe-4">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% files.forEach(function(file) { %>
-                                    <tr>
-                                        <td class="ps-4 text-muted">#<%= file.id %>
-                                        </td>
-                                        <td>
-                                            <i class="bi bi-file-text me-1 text-primary"></i>
-                                            <%= file.original_name %>
-                                                <br>
-                                                <small class="text-muted" style="font-size: 0.7em;"
-                                                    title="Stored Name on disk">
-                                                    <%= file.stored_name %>
-                                                </small>
-                                        </td>
-                                        <td><span class="badge bg-info text-dark"><i class="bi bi-person"></i>
-                                                <%= file.uploaded_by %>
-                                            </span></td>
-                                        <td class="text-muted small">
-                                            <%= new Date(file.upload_date).toLocaleString() %>
-                                        </td>
-                                        <td class="text-end pe-4">
-                                            <a href="/files/download/<%= file.id %>"
-                                                class="btn btn-sm btn-outline-primary" title="Download">
-                                                <i class="bi bi-download"></i>
-                                            </a>
-                                            <form action="/admin/delete-file/<%= file.id %>" method="POST"
-                                                class="d-inline-block">
-                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Force Delete"
-                                                    onclick="return confirm('ADMIN ACTION: Are you sure you want to permanently delete this user\'s file?');">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                    <% } else { %>
-                        <div class="text-center py-5">
-                            <p class="text-muted">No files exist in the system.</p>
-                        </div>
-                        <% } %>
-            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(u=> { %>
+                        <tr>
+                            <td>
+                                <%= u.username %>
+                            </td>
+                            <td>
+                                <%= u.email %>
+                            </td>
+                            <td>
+                                <span class="badge <%= u.is_verified ? 'bg-success' : 'bg-warning' %> rounded-pill">
+                                    <%= u.is_verified ? 'Verified' : 'Pending' %>
+                                </span>
+                            </td>
+                            <td><span class="badge bg-secondary rounded-pill text-uppercase">
+                                    <%= u.role %>
+                                </span></td>
+                            <td>
+                                <form action="/admin/delete-user/<%= u.id %>" method="POST" class="d-inline"
+                                    onsubmit="return confirm('Delete user?');">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                    <button class="btn btn-sm btn-outline-danger border-0"><i
+                                            class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4"><i class="bi bi-journal-text me-2"></i> System Audit Logs</h5>
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-sm small align-middle">
+                <thead class="bg-light sticky-top">
+                    <tr>
+                        <th>Action</th>
+                        <th>User ID</th>
+                        <th>Details</th>
+                        <th>Time</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% logs.forEach(log=> { %>
+                        <tr class="<%= log.action.includes('FAIL') ? 'table-danger' : '' %>">
+                            <td><span class="fw-bold text-uppercase">
+                                    <%= log.action %>
+                                </span></td>
+                            <td>
+                                <%= log.user_id || 'Guest' %>
+                            </td>
+                            <td>
+                                <%= log.details || '-' %>
+                            </td>
+                            <td class="text-muted">
+                                <%= new Date(log.timestamp).toLocaleString() %>
+                            </td>
+                            <td class="font-monospace">
+                                <%= log.ip_address %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
