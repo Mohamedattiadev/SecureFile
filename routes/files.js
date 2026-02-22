@@ -223,6 +223,43 @@ router.get('/download/:id', ensureAuthenticated, async (req, res) => {
     });
 });
 
+router.get('/view/:id', ensureAuthenticated, (req, res) => {
+    const { id: fileId } = req.params;
+    const userId = req.session.userId;
+
+    db.get('SELECT * FROM files WHERE id = ? AND uploaded_by = ?', [fileId, userId], (err, file) => {
+        if (!file) {
+            req.flash('error_msg', 'File not found or unauthorized.');
+            return res.redirect('back');
+        }
+
+        const filePath = path.join(__dirname, '../uploads', file.stored_name);
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send('File not found');
+        }
+
+        res.type(file.original_name);
+        res.setHeader('Content-Disposition', 'inline; filename="' + file.original_name + '"');
+
+        if (file.is_encrypted) {
+            const { getDecryptedStream } = require('../utils/encryption');
+            const stream = getDecryptedStream(filePath, file.encryption_iv);
+            stream.on('error', (err) => {
+                console.error('[STREAM ERROR]', err);
+                if (!res.headersSent) res.status(500).send('Streaming error');
+            });
+            stream.pipe(res);
+        } else {
+            const readStream = fs.createReadStream(filePath);
+            readStream.on('error', (err) => {
+                console.error('[STREAM ERROR]', err);
+                if (!res.headersSent) res.status(500).send('Streaming error');
+            });
+            readStream.pipe(res);
+        }
+    });
+});
+
 router.post('/delete/:id', ensureAuthenticated, (req, res) => {
     const { id: fileId } = req.params;
     const userId = req.session.userId;
