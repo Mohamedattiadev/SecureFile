@@ -1,0 +1,47 @@
+<div class="px-4 py-5 my-5 text-center">
+    <i class="bi bi-shield-lock text-primary" style="font-size: 5rem;"></i>
+    <h1 class="display-5 fw-bold mt-3">Welcome to SecureFile</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4 text-muted">A production-ready secure platform for managing your important documents with
+            enterprise-grade protection against modern web vulnerabilities.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <% if (!user) { %>
+                <a href="/auth/register" class="btn btn-primary btn-lg px-4 gap-3 rounded-pill shadow-sm">Get
+                    Started</a>
+                <a href="/auth/login" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">Login</a>
+                <% } else { %>
+                    <a href="/dashboard" class="btn btn-primary btn-lg px-4 gap-3 rounded-pill shadow-sm">Go to
+                        Dashboard</a>
+                    <% } %>
+        </div>
+    </div>
+</div>
+
+<div class="container px-4 py-5" id="features">
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3 text-center">
+        <div class="feature col">
+            <div class="feature-icon bg-primary bg-gradient text-white rounded-3 mb-3 d-inline-flex p-3 fs-2 shadow-sm">
+                <i class="bi bi-server"></i>
+            </div>
+            <h3 class="fs-4">Secure Storage</h3>
+            <p class="text-muted">Files are stored securely with randomized UUIDs preventing directory traversal and
+                enumeration attacks.</p>
+        </div>
+        <div class="feature col">
+            <div class="feature-icon bg-primary bg-gradient text-white rounded-3 mb-3 d-inline-flex p-3 fs-2 shadow-sm">
+                <i class="bi bi-fingerprint"></i>
+            </div>
+            <h3 class="fs-4">Strong Authentication</h3>
+            <p class="text-muted">Passwords are hashed using bcrypt with high work factors. Sessions are protected
+                against hijacking and fixation.</p>
+        </div>
+        <div class="feature col">
+            <div class="feature-icon bg-primary bg-gradient text-white rounded-3 mb-3 d-inline-flex p-3 fs-2 shadow-sm">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h3 class="fs-4">Strict Role Access</h3>
+            <p class="text-muted">Enforced authorization boundaries prevent IDOR. Only you (or an admin) can access your
+                uploaded sensitive data.</p>
+        </div>
+    </div>
+</div>
